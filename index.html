@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poyexx - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- Style CSS intégré -->
+    <style>
+        /* Variables globales */
+        :root {
+            --primary-color: #ff0000;
+            --secondary-color: #000000;
+            --text-color: #ffffff;
+            --accent-color: #ff3333;
+            --background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Fond de galaxie */
+        #galaxy-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 6rem 2rem 2rem;
+            position: relative;
+        }
+
+        /* Section Accueil */
+        #accueil {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero {
+            position: relative;
+        }
+
+        .animated-text {
+            font-size: 5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 20px var(--primary-color);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            color: var(--text-color);
+        }
+
+        /* Section Projets */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Section Biographie */
+        .bio-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+        }
+
+        /* Section Contact */
+        #contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input, textarea {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--accent-color);
+        }
+
+        /* Liens sociaux */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .social-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Message inspirant */
+        .inspirational-message {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+        }
+
+        .hashtags {
+            margin-top: 2rem;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            padding: 1rem;
+            text-align: right;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .creator-code {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px var(--primary-color),
+                             0 0 20px var(--primary-color),
+                             0 0 30px var(--primary-color);
+            }
+            to {
+                text-shadow: 0 0 20px var(--primary-color),
+                             0 0 30px var(--primary-color),
+                             0 0 40px var(--primary-color);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .animated-text {
+                font-size: 3rem;
+            }
+
+            .social-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fond animé avec Three.js -->
+    <div id="galaxy-background"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Poyexx</div>
+        <ul>
+            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="#projets">Projets</a></li>
+            <li><a href="#biographie">Biographie</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Section Accueil -->
+    <section id="accueil">
+        <div class="hero">
+            <h1 class="animated-text">Poyexx</h1>
+            <p class="subtitle">Fortnite Pro Player</p>
+        </div>
+    </section>
+
+    <!-- Section Projets -->
+    <section id="projets">
+        <h2>Mes Projets</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <h3>Joueur Pro Fortnite</h3>
+                <p>Mon objectif principal : devenir un joueur professionnel Fortnite</p>
+            </div>
+            <div class="project-card">
+                <h3>Structure E-Sport</h3>
+                <p>Intégrer une structure e-sport Fortnite de renom</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Biographie -->
+    <section id="biographie">
+        <h2>Biographie</h2>
+        <div class="bio-content">
+            <p>Né à Angers en 2006, j'ai 19 ans et je vis actuellement en Vendée.</p>
+            <p>Mon caractère déterminé et ma persévérance sont mes plus grandes forces.</p>
+            <p>Chaque projet que j'entreprends est une opportunité de me dépasser.</p>
+        </div>
+    </section>
+
+    <!-- Section Contact -->
+    <section id="contact">
+        <h2>Contact</h2>
+        <form id="contact-form" action="mailto:p0yexxprocontact@gmail.com" method="post">
+            <input type="text" placeholder="Votre nom" required>
+            <input type="email" placeholder="Votre email" required>
+            <textarea placeholder="Votre message" required></textarea>
+            <button type="submit">Envoyer</button>
+        </form>
+        
+        <div class="social-links">
+            <a href="https://www.twitch.tv/p0yexx" target="_blank" class="social-icon twitch">
+                <img src="assets/twitch-icon.png" alt="Twitch">
+            </a>
+            <a href="https://www.youtube.com/@P0yex6" target="_blank" class="social-icon youtube">
+                <img src="assets/youtube-icon.png" alt="YouTube">
+            </a>
+            <a href="https://www.instagram.com/p0yexx/" target="_blank" class="social-icon instagram">
+                <img src="assets/instagram-icon.png" alt="Instagram">
+            </a>
+            <a href="https://x.com/P0yexx" target="_blank" class="social-icon twitter">
+                <img src="assets/twitter-icon.png" alt="X">
+            </a>
+        </div>
+    </section>
+
+    <!-- Message inspirant -->
+    <section id="message">
+        <div class="inspirational-message">
+            <p>🚀 Les amis, j'ai besoin de votre force.</p>
+            <p>Je me donne à fond chaque jour, je grind, je progresse, je rêve grand.</p>
+            <p>Mais pour aller loin, j'ai besoin de vous.</p>
+            <p>🔥 Si vous croyez en moi, si vous aimez ce que je fais, si vous sentez le potentiel… alors c'est maintenant qu'il faut m'envoyer toute votre énergie.</p>
+            <p>Un like, un partage, un commentaire, un follow, un mot d'encouragement…</p>
+            <p>C'est pas juste du soutien, c'est du carburant pour exploser les limites.</p>
+            <p>🎯 Mon objectif ? Tout donner, marquer les esprits et prouver qu'avec de la rage, du cœur et une vraie commu, tout est possible.</p>
+            <p>Alors si t'es là, fais partie de ceux qui m'ont aidé à décoller.</p>
+            <p>🙏 Merci pour la force, merci pour la confiance.</p>
+            <p>C'est ensemble qu'on va monter, et je compte sur vous.</p>
+            <div class="hashtags">
+                <p>#RoadToTheTop 🏆</p>
+                <p>#Poyexx</p>
+                <p>#OnLâcheRien</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="creator-code">Code créateur : pyex</div>
+    </footer>
+
+    <!-- Script JavaScript intégré -->
+    <script>
+        // Configuration Three.js pour le fond de galaxie
+        let scene, camera, renderer, stars = [], meteors = [];
+
+        function initGalaxy() {
+            // Création de la scène
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('galaxy-background').appendChild(renderer.domElement);
+
+            // Position de la caméra
+            camera.position.z = 5;
+
+            // Création des étoiles
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.1,
+                transparent: true
+            });
+
+            const starVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const starField = new THREE.Points(starGeometry, starMaterial);
+            scene.add(starField);
+
+            // Création des météores
+            createMeteor();
+        }
+
+        function createMeteor() {
+            const meteorGeometry = new THREE.BufferGeometry();
+            const meteorMaterial = new THREE.LineBasicMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const meteorVertices = [];
+            const length = 2;
+            const angle = Math.PI / 4;
+            
+            for (let i = 0; i < 10; i++) {
+                const x = (Math.random() - 0.5) * window.innerWidth;
+                const y = (Math.random() - 0.5) * window.innerHeight;
+                meteorVertices.push(x, y, 0);
+                meteorVertices.push(x - length * Math.cos(angle), y - length * Math.sin(angle), 0);
+            }
+
+            meteorGeometry.setAttribute('position', new THREE.Float32BufferAttribute(meteorVertices, 3));
+            const meteor = new THREE.LineSegments(meteorGeometry, meteorMaterial);
+            scene.add(meteor);
+            meteors.push(meteor);
+
+            // Supprimer le météore après l'animation
+            setTimeout(() => {
+                scene.remove(meteor);
+                meteors = meteors.filter(m => m !== meteor);
+            }, 2000);
+
+            // Créer un nouveau météore après un délai aléatoire
+            setTimeout(createMeteor, Math.random() * 3000 + 1000);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotation des étoiles
+            scene.rotation.y += 0.0001;
+            scene.rotation.x += 0.0001;
+
+            // Animation des météores
+            meteors.forEach(meteor => {
+                meteor.position.x -= 2;
+                meteor.position.y -= 2;
+                meteor.material.opacity -= 0.01;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // Gestion du redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation du texte 3D
+        function animateText() {
+            const text = document.querySelector('.animated-text');
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) / 50;
+                mouseY = (e.clientY - window.innerHeight / 2) / 50;
+                
+                gsap.to(text, {
+                    duration: 0.5,
+                    rotationY: mouseX,
+                    rotationX: -mouseY,
+                    ease: "power2.out"
+                });
+            });
+        }
+
+        // Animation au défilement
+        function initScrollAnimations() {
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(section => {
+                section.style.opacity = 0;
+                section.style.transform = 'translateY(50px)';
+                section.style.transition = 'all 0.5s ease-out';
+                observer.observe(section);
+            });
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            initGalaxy();
+            animate();
+            animateText();
+            initScrollAnimations();
+        });
+    </script>
+</body>
+</html> 
